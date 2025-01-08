@@ -1,0 +1,295 @@
+openapi: 3.0.3
+info:
+  title: Homework
+  description: Homework
+  version: 1.0.0
+servers:
+  - url: 'https'
+paths:
+  /v1/user:
+    get:
+      tags:
+        - access
+      operationId: getAuthUser
+      summary: Информация об аутентифицированном пользователе.
+      description: Информация об аутентифицированном пользователе.  
+      responses:
+        '200':
+          description: Успешный ответ.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+  /v1/flights:
+    get:
+      operationId: getFlights
+      summary: Список подходящих рейсов
+      desctiption: Параметры для фильтрации рейсов
+      parameters: 
+        - in: query
+          name: departure_date
+          description: 'Дата вылета'
+          required: true # should be true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: ticket_class
+          description: 'Тип билета'
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: with_luggage
+          description: 'Наличие багажа'
+          required: false
+          schema:
+            type: boolean
+        - in: query
+          name: destination
+          description: 'Место назначения'
+          required: true
+          schema: 
+            type: string
+        - in: query
+          name: origin
+          desctiption: 'Место отбытия'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              type: array
+              items:
+                $ref: "#/components/schemas/FlightForList"
+      
+  /v1/flight/{flight_id}:
+    get:
+      operationId: getFlight
+      summary: Информация о рейсе
+      description: Параметры для поиска рейса
+      parameters:
+        - in: path
+          name: flight_id
+          desctiption: 'ID'
+          required: true
+          schema: 
+            type: string
+            format: uuid
+            example: 1
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlightCard"
+  /v1/simple_flight/{flight_id}:
+    get:
+      operationId: getSimpleFlight
+      summary: Информация о рейсе
+      description: Параметры для поиска рейса
+      parameters:
+        - in: path
+          name: flight_id
+          desctiption: 'ID'
+          required: true
+          schema: 
+            type: string
+            format: uuid
+            example: 1
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SimpleResponse"
+                
+                
+        
+
+
+components:
+  schemas:
+    UserProfile:
+      type: object
+      required:
+        - id
+        - login
+        - avatarUrl
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Идентификатор пользователя
+        login:
+          type: string
+          description: Логин пользователя в системе.
+          example: aaryaz10
+        avatarUrl:
+          type: string
+          description: URL по которому можно получить аватар пользователя.
+          example: https://i.pravatar.cc/150
+    FlightForList:
+      type: object
+      required: 
+        - id
+        - origin
+        - destination
+        - departure_date
+        - arrival_date
+        - departure_time
+        - arrival_time
+        - min_cost
+        - max_cost
+        - company
+      properties:
+        id:
+          type: string
+          description: ID
+          format: uuid
+          example: 1
+        origin:
+          type: string
+          description: Место отбытия
+          example: KZN
+        destination: 
+          type: string
+          # format: date
+          description: Место прибытия
+          example: SWO
+        departure_date:
+          type: string
+          # format: date
+          description: Дата отбытия
+          example: 10.10.2024
+        arrival_date:
+          type: string
+          description: Дата прибытия
+          example: 10.10.2024
+        departure_time:
+          type: string
+          format: time
+          description: Время отбытия
+          example: 10:00
+        arrival_time:
+          type: string
+          format: time
+          description: Время прибытия
+          example: 19:00
+        min_cost: 
+          type: integer
+          description: Минимальная стоимость билета
+          format: int64
+          example: 10000
+        max_cost:
+          type: integer
+          description: Максимальная стоимость билета
+          format: int64
+          example: 14000
+        company:
+          type: string
+          description: Название авиакомпании
+          example: Nordwind Airlines
+    FlightCard:
+      type: object
+      required:
+        - id
+        - origin
+        - destination
+        - departure_datetime
+        - arrival_datetime
+        - company
+        - class_data
+      properties:
+        id:
+          type: string
+          description: ID
+          format: uuid
+          example: 1
+        origin:
+          type: string
+          description: Место отбытия
+          example: KZN
+        destination:
+          type: string
+          description: Место назначения
+          example: SWO
+        departure_datetime:
+          type: string
+          description: Дата и время отбытия
+          example: 10.10.2024 10:10
+        arrival_datetime:
+          type: string
+          description: Дата и время прибытия
+          example: 10.10.2024 12:30
+        company:
+          type: string
+          description: Название авиакомпании
+          example: Nordwind Airlines
+        class_data:
+          type: array
+          items: 
+            $ref: '#/components/schemas/ClassData'
+    ClassData:
+      type: object
+      required:
+        - class
+        - cost
+        - luggage
+        - buggage
+        - refund
+        - ticket_exchange
+      properties:
+        class:
+          type: string
+          description: Класс билета
+          example: Эконом-Лайт
+        luggage:
+          type: integer
+          description: Максимально допустимый вес ручной клади
+          format: int64
+          example: 10
+        buggage:
+          type: integer
+          description: Максимально допустимый вес багажа
+          format: int64
+          example: 23
+        refund:
+          schema:
+            $ref: "#/components/schemas/RefundExchange"
+        ticket_exchange:
+          schema:
+            $ref: "#/components/schemas/RefundExchange"
+    RefundExchange:
+      type: object
+      required:
+        - available
+        - cost
+        - constrains
+      properties:
+        available:
+          type: boolean
+          description: Возможность возврата средств/обмена
+        cost: 
+          type: integer
+          description: Стоимость возврата/обмена в процентах от стоимости билета
+          format: int64
+          example: 10
+        constrains: 
+          type: string
+          description: Ограничения по возврату/обмену
+    SimpleResponse:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+
+      
