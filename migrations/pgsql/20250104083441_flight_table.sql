@@ -11,10 +11,8 @@ CREATE TABLE IF NOT EXISTS flights
     CONSTRAINT fk_destination_id
         FOREIGN KEY (destination_id)
             REFERENCES airports (id),
-    departure_date       date                        not null,
-    departure_time       time                        not null,
-    arrival_date         date                        not null,
-    arrival_time         time                        not null,
+    departure_datetime   timestamp                   not null,
+    arrival_datetime     timestamp                   not null,
     company_id           uuid                        not null,
     CONSTRAINT fk_company_id
         FOREIGN KEY (company_id)

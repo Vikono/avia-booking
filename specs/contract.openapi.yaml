@@ -32,7 +32,8 @@ paths:
           required: true # should be true
           schema:
             type: string
-            format: date
+            format: date-time
+            example: '2017-07-21T17:32:28Z'
         - in: query
           name: ticket_class
           description: 'Тип билета'
@@ -40,7 +41,7 @@ paths:
           schema:
             type: string
         - in: query
-          name: with_luggage
+          name: with_buggage
           description: 'Наличие багажа'
           required: false
           schema:
@@ -140,10 +141,8 @@ components:
         - id
         - origin
         - destination
-        - departure_date
-        - arrival_date
-        - departure_time
-        - arrival_time
+        - departure_datetime
+        - arrival_datetime
         - min_cost
         - max_cost
         - company
@@ -162,25 +161,16 @@ components:
           # format: date
           description: Место прибытия
           example: SWO
-        departure_date:
+        departure_datetime:
           type: string
-          # format: date
+          format: date-time
           description: Дата отбытия
           example: 10.10.2024
-        arrival_date:
+        arrival_datetime:
           type: string
+          format: date-time
           description: Дата прибытия
           example: 10.10.2024
-        departure_time:
-          type: string
-          format: time
-          description: Время отбытия
-          example: 10:00
-        arrival_time:
-          type: string
-          format: time
-          description: Время прибытия
-          example: 19:00
         min_cost: 
           type: integer
           description: Минимальная стоимость билета
@@ -221,10 +211,12 @@ components:
           example: SWO
         departure_datetime:
           type: string
+          format: date-time
           description: Дата и время отбытия
           example: 10.10.2024 10:10
         arrival_datetime:
           type: string
+          format: date-time
           description: Дата и время прибытия
           example: 10.10.2024 12:30
         company:
@@ -242,9 +234,11 @@ components:
         - cost
         - luggage
         - buggage
-        - refund
-        - ticket_exchange
       properties:
+        cost: 
+          type: integer
+          format: int64
+          example: 1000
         class:
           type: string
           description: Класс билета
@@ -259,12 +253,6 @@ components:
           description: Максимально допустимый вес багажа
           format: int64
           example: 23
-        refund:
-          schema:
-            $ref: "#/components/schemas/RefundExchange"
-        ticket_exchange:
-          schema:
-            $ref: "#/components/schemas/RefundExchange"
     RefundExchange:
       type: object
       required:
