@@ -11,7 +11,6 @@ import (
 )
 
 func (a apiServer) GetFlights(w http.ResponseWriter, r *http.Request, params specs.GetFlightsParams) {
-	log.Println("api call ")
 	flight_list, err := db.GetFlights(a.DB, params)
 	if err != nil {
 		log.Printf("Error: %s while fetching the query result", err)
@@ -33,6 +32,17 @@ func (a apiServer) GetFlights(w http.ResponseWriter, r *http.Request, params spe
 }
 
 func (a apiServer) GetFlight(w http.ResponseWriter, r *http.Request, fligthId uuid.UUID) {
+	flightCard, err := db.GetFlightCard(a.DB, fligthId)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(500)
+		return
+	}
+
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(flightCard)
+
 }
 
 func (a apiServer) GetSimpleFlight(w http.ResponseWriter, r *http.Request, flightId uuid.UUID) {

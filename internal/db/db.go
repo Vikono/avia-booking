@@ -15,7 +15,7 @@ const (
 	port     = 5432
 	user     = "root"
 	password = "pass"
-	dbname   = "digdb"
+	dbname   = "avia-db"
 )
 
 func Connect() *sql.DB {
