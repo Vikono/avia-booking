@@ -6,6 +6,7 @@ package specs
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/oapi-codegen/runtime"
@@ -19,24 +20,23 @@ type ClassData struct {
 
 	// Class Класс билета
 	Class string `json:"class"`
+	Cost  int64  `json:"cost"`
 
 	// Luggage Максимально допустимый вес ручной клади
-	Luggage        int64       `json:"luggage"`
-	Refund         interface{} `json:"refund"`
-	TicketExchange interface{} `json:"ticket_exchange"`
+	Luggage int64 `json:"luggage"`
 }
 
 // FlightCard defines model for FlightCard.
 type FlightCard struct {
 	// ArrivalDatetime Дата и время прибытия
-	ArrivalDatetime string      `json:"arrival_datetime"`
+	ArrivalDatetime time.Time   `json:"arrival_datetime"`
 	ClassData       []ClassData `json:"class_data"`
 
 	// Company Название авиакомпании
 	Company string `json:"company"`
 
 	// DepartureDatetime Дата и время отбытия
-	DepartureDatetime string `json:"departure_datetime"`
+	DepartureDatetime time.Time `json:"departure_datetime"`
 
 	// Destination Место назначения
 	Destination string `json:"destination"`
@@ -50,20 +50,14 @@ type FlightCard struct {
 
 // FlightForList defines model for FlightForList.
 type FlightForList struct {
-	// ArrivalDate Дата прибытия
-	ArrivalDate string `json:"arrival_date"`
-
-	// ArrivalTime Время прибытия
-	ArrivalTime string `json:"arrival_time"`
+	// ArrivalDatetime Дата прибытия
+	ArrivalDatetime time.Time `json:"arrival_datetime"`
 
 	// Company Название авиакомпании
 	Company string `json:"company"`
 
-	// DepartureDate Дата отбытия
-	DepartureDate string `json:"departure_date"`
-
-	// DepartureTime Время отбытия
-	DepartureTime string `json:"departure_time"`
+	// DepartureDatetime Дата отбытия
+	DepartureDatetime time.Time `json:"departure_datetime"`
 
 	// Destination Место прибытия
 	Destination string `json:"destination"`
@@ -113,13 +107,13 @@ type UserProfile struct {
 // GetFlightsParams defines parameters for GetFlights.
 type GetFlightsParams struct {
 	// DepartureDate Дата вылета
-	DepartureDate openapi_types.Date `form:"departure_date" json:"departure_date"`
+	DepartureDate time.Time `form:"departure_date" json:"departure_date"`
 
 	// TicketClass Тип билета
 	TicketClass *string `form:"ticket_class,omitempty" json:"ticket_class,omitempty"`
 
-	// WithLuggage Наличие багажа
-	WithLuggage *bool `form:"with_luggage,omitempty" json:"with_luggage,omitempty"`
+	// WithBuggage Наличие багажа
+	WithBuggage *bool `form:"with_buggage,omitempty" json:"with_buggage,omitempty"`
 
 	// Destination Место назначения
 	Destination string `form:"destination" json:"destination"`
@@ -235,11 +229,11 @@ func (siw *ServerInterfaceWrapper) GetFlights(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	// ------------- Optional query parameter "with_luggage" -------------
+	// ------------- Optional query parameter "with_buggage" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "with_luggage", r.URL.Query(), &params.WithLuggage)
+	err = runtime.BindQueryParameter("form", true, false, "with_buggage", r.URL.Query(), &params.WithBuggage)
 	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "with_luggage", Err: err})
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "with_buggage", Err: err})
 		return
 	}
 
