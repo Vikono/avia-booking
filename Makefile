@@ -23,8 +23,7 @@ test:
 	go test -v hello.go
 
 run:
-	go build -o $(BINARY_NAME) ./cmd/app/
-	./$(BINARY_NAME)
+	go run -C ./cmd/app/ .
 
 clean:
 	go clean
